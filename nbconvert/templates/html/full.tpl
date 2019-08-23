@@ -1,5 +1,6 @@
 {%- extends 'basic.tpl' -%}
 {% from 'mathjax.tpl' import mathjax %}
+{% from 'ipywidgets.tpl' import ipywidgets %}
 
 
 {%- block header -%}
@@ -16,33 +17,11 @@
 
 {% block ipywidgets %}
 {%- if "widgets" in nb.metadata -%}
-<script>
-(function() {
-  function addWidgetsRenderer() {
-    var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
-    var scriptElement = document.createElement('script');
-    var widgetRendererSrc = '{{ resources.ipywidgets_base_url }}@jupyter-widgets/html-manager@*/dist/embed-amd.js';
-    var widgetState;
-
-    // Fallback for older version:
-    try {
-      widgetState = mimeElement && JSON.parse(mimeElement.innerHTML);
-
-      if (widgetState && (widgetState.version_major < 2 || !widgetState.version_major)) {
-        widgetRendererSrc = '{{ resources.ipywidgets_base_url }}jupyter-js-widgets@*/dist/embed.js';
-      }
-    } catch(e) {}
-
-    scriptElement.src = widgetRendererSrc;
-    document.body.appendChild(scriptElement);
-  }
-
-  document.addEventListener('DOMContentLoaded', addWidgetsRenderer);
-}());
-</script>
+{{ ipywidgets(resources) }}
 {%- endif -%}
 {% endblock ipywidgets %}
 
+{% block css -%}
 {% for css in resources.inlining.css -%}
     <style type="text/css">
     {{ css }}
@@ -85,6 +64,7 @@ div#notebook-container{
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
 <link rel="stylesheet" href="custom.css">
+{%- endblock css -%}
 
 <!-- Loading mathjax macro -->
 {{ mathjax() }}
